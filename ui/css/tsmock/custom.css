@@ -1,0 +1,24 @@
+#id_buttons {
+	position:relative
+}
+#id_button_save {
+	position:absolute;
+	right:10px;
+	bottom:-40px;
+	}
+#id_button_load {
+	position:absolute;
+	right:100px;
+	bottom:-40px;
+	}
+#id_button_start {
+	position:absolute;
+	right:100px;
+	bottom:-40px;
+}
+
+#id_button_stop {
+	position:absolute;
+	right:100px;
+	bottom:-40px;
+}

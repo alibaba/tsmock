@@ -1,0 +1,206 @@
+{
+	"log": {
+		//log level, it's log4j log level
+		"logLevel":"INFO",
+		//log the request, resposne body or not, in case the body is very huge, you don't want to log it
+		"logBody": true
+	},
+	"routeTable" : [
+		{
+			//the mq  mock will listen on
+			"mq" : {
+				"consumer" : "tsmock_consumer1",
+				"topic" : "tsmock_consumer_topic1",
+				"tag" : "tsmock_consumer_tag1"
+			},
+			"route" : [
+				//route is based on key|body|key+body
+				{
+					"name":"[Match]--[Key]",
+					"request" : {
+						"key" : "key_key"
+					},
+					//response will send to this mq
+					"response" : {
+						"producer" : "tsmock_producer1",
+						"topic" : "tsmock_producer_topic1",
+						"tag" : "tsmock_producer_tag1",
+						"key" : "key_key",
+						"body" : "{\"matched\":\"[key]\"}"
+					}
+				},
+				//route is based on key|key+body
+				{
+					"name":"[Match]--[Body]",
+					"request" : {
+						"bodyRegex" : "test.*"
+					},
+					//response will send to this mq
+					"response" : {
+						"producer" : "tsmock_producer1",
+						"topic" : "tsmock_producer_topic1",
+						"tag" : "tsmock_producer_tag1",
+						"body" : "{\"matched\":\"[Body]\"}"
+					}
+				},
+				{
+					"name":"[Match]--[Key + Body]",
+					"request" : {
+						"key" : "keybody_key",
+						"bodyRegex" : "body.*"
+					},
+					"response" : {
+						"producer" : "tsmock_producer1",
+						"topic" : "tsmock_producer_topic1",
+						"tag" : "tsmock_producer_tag1",
+						"key" : "keybody_key",
+						"body" : "{\"matched\":\"[Key + body]\"}"
+					}
+				},
+				{
+					"name":"[Match]--[Sleep]",
+					"request" : {
+						"key" : "sleep_key",
+						"bodyRegex" : "body.*"
+					},
+					"response" : {
+						"producer" : "tsmock_producer1",
+						"topic" : "tsmock_producer_topic1",
+						"tag" : "tsmock_producer_tag1",
+						"key" : "sleep_key",
+						"body" : "{\"matched\":\"[Sleep]\"}",
+						//sleep xxx before sending  response
+						"sleep": 5000
+					}
+				},
+              {
+                "name":"[Match]--[Script in request]",
+                "request" : {
+                  "key" : "requestscript_key",
+                  "bodyRegex" : "body.*",
+					//script in request support 2 predefined parameters and return boolean
+					//${request_key}
+					//${request_body}
+                  "script": "src/test/script/mq/request/validate_request.bsh"
+
+                },
+                "response" : {
+                  "producer" : "tsmock_producer1",
+                  "topic" : "tsmock_producer_topic1",
+                  "tag" : "tsmock_producer_tag1",
+                  "key" : "requestscript_key",
+                  "body" : "{\"matched\":\"[Script in request]\"}"
+                }
+              },
+                {
+                    "name":"[Match]--[Script in response]",
+                    "request" : {
+                        "key" : "responsescript_key",
+						"bodyRegex" : "body.*"
+                    },
+                    "response" : {
+                        "producer" : "tsmock_producer1",
+                        "topic" : "tsmock_producer_topic1",
+                        "tag" : "tsmock_producer_tag1",
+                        "key" : "responsescript_key",
+                        "body" : "{\"matched\":\"<body>\"}",
+						//response support 4 predefined  parameters and return string
+						//${request_key}
+						//${request_body}
+						//${response_key}
+						//${response_body}
+                      "script": "src/test/script/mq/response/transform_response.bsh"
+                    }
+                },
+				{
+					"name":"[Match]--[Callback Http]",
+					"request" : {
+						"key" : "callbackhttp_key",
+						"bodyRegex" : "body.*"
+					},
+					"response" : {
+						"producer" : "tsmock_producer1",
+						"topic" : "tsmock_producer_topic1",
+						"tag" : "tsmock_producer_tag1",
+						"key" : "callbackhttp_key",
+						"body" : "{\"matched\":\"[Callback Http]\"}"
+					},
+					"callbacks": [
+						{
+							"type": "http",
+							"info": "method=POST,url=http://localhost:8848/mock/post-path",
+							//only support send the raw body
+							"value": "{\"callback\":\"http-post\"}"
+						}
+					]
+				},
+				{
+					"name":"[Match]--[Callback Mq]",
+					"request" : {
+						"key" : "callbackmq_key",
+						"bodyRegex" : "body.*"
+					},
+					"response" : {
+						"producer" : "tsmock_producer1",
+						"topic" : "tsmock_producer_topic1",
+						"tag" : "tsmock_producer_tag1",
+						"key" : "callbackmq_key",
+						"body" : "{\"matched\":\"[Callback Mq]\"}"
+					},
+                  "callbacks": [
+                    {
+                      "type": "mq",
+                      "info": "producer=tsmock_producer1,topic=tsmock_producer_topic1,tag=tsmock_producer_tag1,key=tsmock_producer_key1",
+                      "value": "{\"callback\":\"mq\"}"
+                    }
+                  ]
+				},
+              {
+                "name": "[Match]--[Callback Websocket]",
+                "request": {
+                  "key": "callbackwebsocket_key",
+					"bodyRegex" : "body.*"
+                },
+                //response will send to this mq
+                "response": {
+                  "producer": "tsmock_producer1",
+                  "topic": "tsmock_producer_topic1",
+                  "tag": "tsmock_producer_tag1",
+                  "key": "callbackwebsocket_key",
+                  "body": "{\"matched\":\"[Callback Websocket]\"}"
+                },
+                "callback": [
+                  {
+                    "type": "websocket",
+                    "info": "url=ws://lcoalhost:8848/mock/websocket",
+                    "value": "{\"callback\":\"websocket\"}"
+                  }
+                ]
+              }
+            ]
+		},
+		{
+			"mq": {
+				"consumer": "tsmock_consumer2",
+				"topic": "tsmock_consumer_topic2",
+				"tag": "tsmock_consumer_tag2"
+			},
+			"route": [
+				{
+					"name": "[Match]--[Key]",
+					"request": {
+						"key": "key_key",
+						"bodyRegex" : "body.*"
+					},
+					"response": {
+						"producer": "tsmock_producer2",
+						"topic": "tsmock_producer_topic2",
+						"tag": "tsmock_producer_tag2",
+						"key": "key_key",
+						"body": "{\"matched\":\"[key]\"}"
+					}
+				}
+			]
+		}
+	]
+}

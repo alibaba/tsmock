@@ -1,0 +1,13 @@
+.classpath
+.project
+.travis.yml
+dependency-reduced-pom.xml
+.settings/
+script/
+target/
+test-output/
+*.iml
+.git
+.idea
+.DS_Store
+log/*.log

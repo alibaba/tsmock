@@ -81,6 +81,7 @@ public final class HttpMockServerHelper {
             final String host = httpMockConfig.getHost();
             final List<HttpServerOption> serverOptions = httpMockConfig.getServerOptions();
             final PathHandler pathHandler = PathHandlerFactory.create();
+
             Builder httpServerBuilder = Undertow.builder().addHttpListener(port, host).setHandler(proxyHandler);
             if ((serverOptions != null) && (serverOptions.size() > 0)) {
                 for (final HttpServerOption serverOption : serverOptions) {

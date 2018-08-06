@@ -22,6 +22,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.alibaba.tsmock.main.TSMockMain;
+import com.alibaba.tsmock.util.JSONUtil;
 import org.apache.commons.io.FileUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -47,7 +48,8 @@ public class HttpConfig {
 		HttpMockConfig httpMockConfig = null;
 		try {
 			final String configStr = FileUtils.readFileToString(new File(TSMockMain.httpOptionStr));
-			httpMockConfig = JSON.parseObject(configStr, HttpMockConfig.class);
+			String minifyConfigStr = JSONUtil.minify(configStr);
+			httpMockConfig = JSON.parseObject(minifyConfigStr, HttpMockConfig.class);
 		} catch (final IOException ioe) {
 
 		}

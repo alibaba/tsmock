@@ -46,8 +46,6 @@ public final class HttpMockConfig extends MockConfig {
 	/** The route list. */
 	private List<HttpRoute> routeTable;
 
-	/** The mapping routes file list. */
-	private List<String> mappingRoutesFileList;
 
 	/**
 	 * Instantiates a new mock core config.
@@ -176,18 +174,6 @@ public final class HttpMockConfig extends MockConfig {
 		return routeTable;
 	}
 
-	/**
-	 * Gets the mapping routes file list.
-	 *
-	 * @return the mapping routes file list
-	 */
-	public List<String> getMappingRoutesFileList() {
-		if (mappingRoutesFileList == null) {
-			mappingRoutesFileList = Collections.emptyList();
-		}
-
-		return mappingRoutesFileList;
-	}
 
 
 	/**
@@ -200,14 +186,5 @@ public final class HttpMockConfig extends MockConfig {
 		this.routeTable = routeTable;
 	}
 
-	/**
-	 * Sets the mapping routes file list.
-	 *
-	 * @param mappingRoutesFileList
-	 *            the new mapping routes file list
-	 */
-	public void setMappingRoutesFileList(List<String> mappingRoutesFileList) {
-		this.mappingRoutesFileList = mappingRoutesFileList;
-	}
 
 }

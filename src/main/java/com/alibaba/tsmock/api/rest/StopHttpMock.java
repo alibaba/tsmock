@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.alibaba.tsmock.api.rest.po.TSMockResponse;
 import com.alibaba.tsmock.constants.Config;
+import com.alibaba.tsmock.core.http.HttpMockServer;
 import com.alibaba.tsmock.main.TSMockMain;
 
 /**
@@ -34,7 +35,7 @@ public class StopHttpMock {
 	public TSMockResponse startService() {
 		TSMockResponse tsMockResponse = null;
 		try {
-			if (TSMockMain.start(Config.DEFAULT_HTTP_MOCK_FILE, null,null,true) == false) {
+			if (HttpMockServer.getServer().shutdown() == false)  {
 				tsMockResponse = new TSMockResponse();
 				tsMockResponse.setReturn_code("1001");
 				tsMockResponse.setReturn_msg("Fail");

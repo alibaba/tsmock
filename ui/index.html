@@ -1,92 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta name="generator"
-    content="HTML Tidy for HTML5 (experimental) for Windows https://github.com/w3c/tidy-html5/tree/c63cc39" />
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+          content="HTML Tidy for HTML5 (experimental) for Windows https://github.com/w3c/tidy-html5/tree/c63cc39"/>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>TSMOCK-Mock every thing!</title>
-    <meta name="description" content="Source code generated using layoutit.com" />
-    <meta name="author" content="LayoutIt!" />
-    <link href="css/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/style.css" rel="stylesheet" />
-    <link href="css/tsmock/custom.css" rel="stylesheet" />
-  </head>
-  <body onload="loadConfig()">
-  <div class="container-fluid">
+    <meta name="description" content="Source code generated using layoutit.com"/>
+    <meta name="author" content="LayoutIt!"/>
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/style.css" rel="stylesheet"/>
+    <link href="css/tsmock/custom.css" rel="stylesheet"/>
+
+</head>
+<body onload="loadConfig()">
+<div class="container-fluid">
     <h3 class="panel-body">TSMock - mock everything</h3>
-    <div class="row">
-      <div class="col-md-12">
-        <ul class="nav nav-tabs">
-          <li class="active">
+    <ul class="nav nav-tabs" id="id_ul_tab">
+        <li class="active">
             <a data-toggle="tab" href="#id_config">Configuration</a>
-          </li>
-          <li>
-            <a data-toggle="tab" href="#id_start">Start</a>
-          </li>
-          <li>
-            <a data-toggle="tab" href="#id_stop">Stop</a>
-          </li>
-          <li>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#id_restart">Restart</a>
+        </li>
+        <li>
             <a data-toggle="tab" href="#id_log">Log</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="tab-content">
-          <div id="id_config" class="tab-pane fade in active">
-            <div class="form-group">
-              <form class="form-horizontal">
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div id="id_config" class="tab-pane fade in active">
+            <form class="form-horizontal">
                 <div class="form-group">
-                  <label class="control-label col-sm-1" for="host">Host:</label>
-                  <div class="col-sm-4">
-                    <input type="host" class="form-control" id="id_host" placeholder="Enter host" />
-                  </div>
+                    <textarea class="form-control" id="id_config_content" name="editordata" rows="20"></textarea>
+                    <div class="row" id="id_buttons">
+                        <button type="button" class="btn btn-primary" id="id_button_save" onclick="saveConfig()">Save
+                        </button>
+                        <button type="button" class="btn btn-primary" id="id_button_load" onclick="loadConfig()">Load
+                        </button>
+                    </div>
                 </div>
-                <div class="form-group">
-                  <label class="control-label col-sm-1" for="port">Port:</label>
-                  <div class="col-sm-2">
-                    <input type="port" class="form-control" id="port" placeholder="Enter port" />
-                  </div>
+            </form>
+        </div>
+        <div id="id_restart" class="tab-pane fade">
+
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                     style="width:0%">
+                    <span class="sr-only">0% Complete</span>
                 </div>
-              </form>
-              <div class="row" id="id_buttons">
-              <button type="button" class="btn btn-primary" id="id_button_save" onclick="saveConfig()">Save</button> 
-              <button type="button" class="btn btn-primary" id="id_button_load" onclick="loadConfig()">Load</button></div>
             </div>
-          </div>
-          <div id="id_start" class="tab-pane fade">
-            <div class="progress">
-              <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
-              style="width:0%">
-                <span class="sr-only">0% Complete</span>
-              </div>
+            <div>
+                <button type="button" class="btn btn-primary" id="id_button_restart" onclick="restartTSMock()">Restart</button>
             </div>
-            <button type="button" class="btn btn-primary" id="id_button_start" onclick="startTSMock()">Start</button>
-          </div>
-          <div id="id_stop" class="tab-pane fade">
-            <div class="progress">
-              <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
-              style="width:0%">
-                <span class="sr-only">0% Complete</span>
-              </div>
-            </div>
-            <button type="button" class="btn btn-primary" id="id_button_stop" onclick="stopTSMock()">Stop</button>
-          </div>
         </div>
         <div id="id_log" class="tab-pane fade">
-          <div class="form-group">
-          <textarea class="form-control" rows="10" id="id_log_content"></textarea> 
-          <button type="button" class="btn btn-primary" id="id_button_stop" onclick="refreshLog()">Refresh</button></div>
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <textarea class="form-control" rows="10" id="id_log_content"></textarea>
+                    <button type="button" class="btn btn-primary" id="id_button_stop" onclick="refreshLog()">Refresh
+                    </button>
+                </div>
+            </form>
         </div>
-      </div>
     </div>
-  </div>
-  <script src="js/jquery.min.js"></script> 
-  <script src="js/bootstrap.min.js"></script> 
-  <script src="js/scripts.js"></script> 
-  <script src="js/tsmock/config.js"></script></body>
+
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/scripts.js"></script>
+<script src="js/tsmock/config.js"></script>
+</body>
 </html>

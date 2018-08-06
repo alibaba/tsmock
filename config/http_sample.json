@@ -1,55 +1,30 @@
 {
-  //mock server hostname or ip
-  "host": "0.0.0.0",
-  //mock server port
-  "port": 8848,
-  //mock server base url, the final url will be http://hos[Match]--port/baseUrl/path?queryparam
+  "type": "httpMockConfig",
   "baseUrl": "/mock",
-  //tsmock is based on undertow, it support undertow server options, you can adjust some options to match your need or optimize the performance
-  //for detaill options, please refer to http://undertow.io/undertow-docs/undertow-docs-1.3.0/index.html
-  //set it as name value pair like below
-  "serverOption": [
-    {
-      "name": "REQUEST_PARSE_TIMEOUT",
-      "value": "100000"
-    }
-  ],
-  //default response setting, if you don't set the response, this default setting will be used
-  //use defaults not default as default is java preserved word
   "defaults": {
-    "statusCode": 200,
     "body": "{\"matched\":\"default body\"}",
-    "contentType": "application/json;charset=utf8"
+    "contentType": "application/json;charset=utf8",
+    "statusCode": 200
   },
-  //log setting
+  "host": "0.0.0.0",
   "log": {
-    //log level, it's log4j log level
-    "logLevel":"INFO",
-    //log the request, resposne body or not, in case the body is very huge, you don't want to log it
-    "logBody": true
+    "logBody": true,
+    "logLevel": "INFO"
   },
-  //route table, the core of mock function
-  //the match strategy is
-  //1. If multiple matches found, the more specific match will be used
+  "port": 8848,
   "routeTable": [
     {
-      //just a name for this pattern
       "name": "[Match]--[GET]+[Path]",
-      //http request, the pattern request will match
       "request": {
-        //the url path need to match
         "path": "/get-path",
-        //the http method need to match
         "method": "GET"
       },
-      //if match the request, this response will be return
       "response": {
-        //status code in response
-        "statusCode": 200,
-        //response body
         "body": "{\"matched\":\"[GET]+[Path]\"}",
-        //response content type
-        "contentType": "application/json;charset=gbk"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=gbk",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
@@ -59,9 +34,11 @@
         "method": "POST"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[POST]+[Path]\"}",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
@@ -71,9 +48,11 @@
         "method": "PUT"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[PUT]+[Path]\"}",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
@@ -83,168 +62,181 @@
         "method": "DELETE"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[DELETE]+[Path]\"}",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
-    // for query param, use below algorithm
-    //query param name, full match, don't support a part of param name match, because it's too complex, for example
-    //  route 1 match first 3 param , route 2 match last 3 param, which one should be used, it need a complex priority algorithm.
-    //query param value, if route has value match it, it route no value, match it too in case user don't care value, treat route with
-    //   value and without value the same priority and return the last one, the same reason, it need complex priority system,
     {
       "name": "[Match]--[GET]+[Path]+[1 query param name]",
       "request": {
-        "path": "/get-path",
-        "method": "GET",
         "queryParams": [
           {
             "name": "query-param-name1"
           }
-        ]
+        ],
+        "path": "/get-path",
+        "method": "GET"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[GET]+[Path]+[1 query param name]\"}",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
       "name": "[Match]--[GET]+[Path]+[1 query param name]+[1 query param value]",
       "request": {
-        "path": "/get-path",
-        "method": "GET",
         "queryParams": [
           {
             "name": "query-param-name1",
-            "values" :[
-            "query-param-value1"
-          ]
+            "values": [
+              "query-param-value1"
+            ]
           }
-        ]
+        ],
+        "path": "/get-path",
+        "method": "GET"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[GET]+[Path]+[1 query param name]+[1 query param value]\"}",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
       "name": "[Match]--[GET]+[Path]+[1 query param name]+[2 query param values]",
       "request": {
-        "path": "/get-path",
-        "method": "GET",
         "queryParams": [
           {
             "name": "query-param-name1",
-            "values" :[
+            "values": [
               "query-param-value1",
               "query-param-value2"
             ]
           }
-        ]
+        ],
+        "path": "/get-path",
+        "method": "GET"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[GET]+[Path]+[1 query param name]+[2 query param value]\"}",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
       "name": "[Match]--[GET]+[Path]+[2 query param names]+[2 query param values]",
       "request": {
-        "path": "/get-path",
-        "method": "GET",
         "queryParams": [
           {
             "name": "query-param-name1",
-            "values" :[
+            "values": [
               "query-param-value1"
             ]
           },
           {
             "name": "query-param-name2",
-            "values" :[
+            "values": [
               "query-param-value2"
             ]
           }
-        ]
+        ],
+        "path": "/get-path",
+        "method": "GET"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[GET]+[Path]+[2 query param names]+[2 query param value]\"}",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
       "name": "[Match]--[POST]+[Path]+[1 form param name]",
       "request": {
-        "path": "/post-path",
-        "method": "POST",
         "formParams": [
           {
             "name": "form-param-name1"
           }
-        ]
+        ],
+        "path": "/post-path",
+        "method": "POST"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[POST]+[Path]+[1 form param name]\"}",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
       "name": "[Match]--[POST]+[Path]+[1 form param name]+[1 form param value]",
       "request": {
-        "path": "/post-path",
-        "method": "POST",
         "formParams": [
           {
             "name": "form-param-name1",
-            "value" : "form-param-value1"
+            "value": "form-param-value1"
           }
-        ]
+        ],
+        "path": "/post-path",
+        "method": "POST"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[POST]+[Path]+[1 form param name]+[1 form param value]\"}",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
       "name": "[Match]--[POST]+[Path]+[2 form param value]+[2 form param value]",
       "request": {
-        "path": "/post-path",
-        "method": "POST",
         "formParams": [
           {
             "name": "form-param-name1",
-            "value" : "form-param-value1"
+            "value": "form-param-value1"
           },
           {
             "name": "form-param-name2",
-            "value" : "form-param-value2"
+            "value": "form-param-value2"
           }
-        ]
+        ],
+        "path": "/post-path",
+        "method": "POST"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[POST]+[Path]+[2 form param name]+[2 form param value]\"}",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
       "name": "[Match]--[POST]+[Path]+[Body regex]",
       "request": {
         "path": "/post-path",
-        "method": "POST",
-        "bodyRegex":"^test:body$"
+        "bodyRegex": "^test:body$",
+        "method": "POST"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[POST]+[Path]+[Body regex]\"}",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
@@ -254,10 +246,11 @@
         "method": "GET"
       },
       "response": {
-        "statusCode": 200,
-        "bodyPointingToFile": true,
         "body": "src/test/data/utbody.json",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": true,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
@@ -267,6 +260,8 @@
         "method": "GET"
       },
       "response": {
+        "bodyPointingToFile": false,
+        "headers": []
       }
     },
     {
@@ -276,11 +271,12 @@
         "method": "GET"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[GET]+[Path]\"}",
+        "bodyPointingToFile": false,
         "contentType": "application/json;charset=gbk",
-        //sleep is millisecond
-        "sleep":5000
+        "headers": [],
+        "sleep": 5000,
+        "statusCode": 200
       }
     },
     {
@@ -290,192 +286,200 @@
         "method": "GET"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[GET]+[Compress]\"}",
+        "bodyPointingToFile": false,
+        "compress": "gzip",
         "contentType": "application/json;charset=gbk",
-        //only supoort zip now
-        "compress":"gzip"
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
       "name": "[Match]--[Script in request]+[Save request]",
       "request": {
         "path": "/post-script-save-request",
+        "bodyRegex": "^test:body$",
         "method": "POST",
-        "bodyRegex":"^test:body$",
-        //request support 2 predefined parameters, script must return a boolean
-        //${request_body}, request body
-        //${request_query_str}, request query string
         "script": "src/test/script/http/request/save_request.bsh"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[Script in request]+[Save request]\"}",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
       "name": "[Match]--[Script in request]+[Validate request]",
       "request": {
         "path": "/post-script-validate-request",
+        "bodyRegex": "^test:body$",
         "method": "POST",
-        "bodyRegex":"^test:body$",
         "script": "src/test/script/http/request/validate_request.bsh"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[Script in request]+[Validate request]\"}",
-        "contentType": "application/json;charset=utf8"
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
       "name": "[Match]--[Script in response]+[Transform response]",
       "request": {
         "path": "/post-script-transform-response",
-        "method": "POST",
-        "bodyRegex":"^test:body$"
+        "bodyRegex": "^test:body$",
+        "method": "POST"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"<body>\"}",
+        "bodyPointingToFile": false,
         "contentType": "application/json;charset=utf8",
-        //response support 3 predefined parameters, script must return a string
-        //${request_body}, request body
-        //${request_query_str}, request query string
-        //${response_body}, response body
-        "script": "src/test/script/http/response/transform_response.bsh"
+        "headers": [],
+        "script": "src/test/script/http/response/transform_response.bsh",
+        "statusCode": 200
       }
     },
     {
       "name": "[Match]--[proxy]",
-      "request": {
-        "path": "/get-proxy",
-        "method": "GET",
-        "queryParams": [
-          {
-            "name": "query-param-name1",
-            "values" :[
-              "query-param-value1"
-            ]
-          }
-        ]
-      },
-      "response": {
-        "statusCode": 200,
-        "body": "{\"matched\":\"[Proxy]\"}",
-        "contentType": "application/json;charset=utf8"
-      },
-      //if proxy is enable, proxy the request to targetUrl
       "proxy": {
         "enabled": true,
         "targetUrl": "http://localhost:8848/mock/get-path"
+      },
+      "request": {
+        "queryParams": [
+          {
+            "name": "query-param-name1",
+            "values": [
+              "query-param-value1"
+            ]
+          }
+        ],
+        "path": "/get-proxy",
+        "method": "GET"
+      },
+      "response": {
+        "body": "{\"matched\":\"[Proxy]\"}",
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=utf8",
+        "headers": [],
+        "statusCode": 200
       }
     },
     {
+      "callbacks": [
+        {
+          "info": "method=POST,url=http://localhost:8848/mock/post-path",
+          "type": "http",
+          "value": "{\"callback\":\"http-post\"}"
+        }
+      ],
       "name": "[Match]--[Callback]+[Http]",
       "request": {
         "path": "/get-callback-http",
         "method": "GET"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[Callback]+[Http]\"}",
-        "contentType": "application/json;charset=gbk"
-      },
-      "callbacks": [
-        {
-          "type": "http",
-          "info": "method=POST,url=http://localhost:8848/mock/post-path",
-          //only support send the raw body
-          "value": "{\"callback\":\"http-post\"}",
-        }
-      ]
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=gbk",
+        "headers": [],
+        "statusCode": 200
+      }
     },
     {
+      "callbacks": [
+        {
+          "info": "producer=testprocecer,topic=testtopic,tag=testtag,key=testkey",
+          "type": "mq",
+          "value": "{\"callback\":\"mq\"}"
+        }
+      ],
       "name": "[Match]--[Callback]+[MQ]",
       "request": {
         "path": "/get-callback-mq",
         "method": "GET"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[Callback]+[MQ]\"}",
-        "contentType": "application/json;charset=gbk"
-      },
-      "callbacks": [
-        {
-          "type": "mq",
-          "info": "producer=testprocecer,topic=testtopic,tag=testtag,key=testkey",
-          "value": "{\"callback\":\"mq\"}",
-        }
-      ]
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=gbk",
+        "headers": [],
+        "statusCode": 200
+      }
     },
     {
+      "callbacks": [
+        {
+          "info": "url=ws://lcoalhost:8848/mock/websocket",
+          "type": "websocket",
+          "value": "{\"callback\":\"websocket\"}"
+        }
+      ],
       "name": "[Match]--[Callback]+[Websocket]",
       "request": {
         "path": "/get-callback-websocket",
         "method": "GET"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[Callback]+[Websocket]\"}",
-        "contentType": "application/json;charset=gbk"
-      },
-      "callbacks": [
-        {
-          "type": "websocket",
-          "info": "url=ws://lcoalhost:8848/mock/websocket",
-          "value": "{\"callback\":\"websocket\"}",
-        }
-      ]
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=gbk",
+        "headers": [],
+        "statusCode": 200
+      }
     },
     {
+      "callbacks": [
+        {
+          "info": "method=POST,url=http://localhost:8848/mock/post-path",
+          "sleep": 5000,
+          "type": "http",
+          "value": "{\"callback\":\"http-post\"}"
+        }
+      ],
       "name": "[Match]--[Sleep in callback]",
       "request": {
         "path": "/get-callback-http",
         "method": "GET"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[Callback]+[Http]\"}",
-        "contentType": "application/json;charset=gbk"
-      },
-      "callbacks": [
-        {
-          "type": "http",
-          "info": "method=POST,url=http://localhost:8848/mock/post-path",
-          //only support send the raw body
-          "value": "{\"callback\":\"http-post\"}",
-          "sleep": 5000
-        }
-      ]
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=gbk",
+        "headers": [],
+        "statusCode": 200
+      }
     },
     {
+      "callbacks": [
+        {
+          "info": "method=POST,url=http://localhost:8848/mock/post-path",
+          "script": "src/test/script/http/callback/transform_callback.bsh",
+          "type": "http",
+          "value": "<callbackbody>"
+        }
+      ],
       "name": "[Match]--[Script in callback]",
       "request": {
         "path": "/get-callback-http",
         "method": "GET"
       },
       "response": {
-        "statusCode": 200,
         "body": "{\"matched\":\"[Callback]+[Http]\"}",
-        "contentType": "application/json;charset=gbk"
-      },
-      "callbacks": [
-        {
-          "type": "http",
-          "info": "method=POST,url=http://localhost:8848/mock/post-path",
-          "value": "<callbackbody>",
-          //callback script support 5 predefined params
-          //${info}, info in route
-          //${value}, value in route
-          //${request_body}, request body
-          //${response_body}, response body
-          //${request_query_str}, request query string
-          //callback has to return a object with properties info and value which means the processd info and value
-          "script":"src/test/script/http/callback/transform_callback.bsh"
-        }
-      ]
-    },
+        "bodyPointingToFile": false,
+        "contentType": "application/json;charset=gbk",
+        "headers": [],
+        "statusCode": 200
+      }
+    }
+  ],
+  "serverOptions": [
+    {
+      "name": "REQUEST_PARSE_TIMEOUT",
+      "value": "100000"
+    }
   ]
 }

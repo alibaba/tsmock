@@ -12,7 +12,12 @@
 
 package com.alibaba.tsmock.core.http;
 
+import com.alibaba.tsmock.path.PathHandlerFactory;
 import io.undertow.Undertow;
+import io.undertow.servlet.Servlets;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Class that will start/shutdown ServletServer implementation.
@@ -24,8 +29,9 @@ import io.undertow.Undertow;
  */
 public final class HttpMockServer {
 
+	private static HttpMockServer httpMockServer;
 	/** The http core. */
-	private final Undertow httpServer;
+	private  Undertow httpServer;
 
 	/**
 	 * Instantiates a new http mock core.
@@ -40,16 +46,32 @@ public final class HttpMockServer {
 	/**
 	 * Shutdown.
 	 */
-	public void shutdown() {
-		httpServer.stop();
+	public boolean shutdown() {
+		try {
+			PathHandlerFactory.getManager().undeploy();
+			Servlets.defaultContainer().removeDeployment(PathHandlerFactory.getDeploymentInfo());
+			PathHandlerFactory.setDeploymentInfo(null);
+			PathHandlerFactory.setManager(null);
+			httpMockServer = null;
+			httpServer = null;
+		}
+		catch (Exception e) {
+			Date dateStart=new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+			String formatDateSstart = sdf.format(dateStart);
+			System.out.println("["+formatDateSstart+"] [HTTP] Get exception when stop the server:"+e);
+		}
+		return true;
 	}
+
+
 
 	/**
 	 * Start.
 	 *
 	 */
 	public static void start() {
-		createServer();
+		getServer();
 	}
 
 	/**
@@ -57,9 +79,12 @@ public final class HttpMockServer {
 	 *
 	 * @return the http mock core
 	 */
-	private static HttpMockServer createServer() {
-		final Undertow undertow = HttpMockServerHelper.startHttpServer();
+	public static HttpMockServer getServer() {
+		if (httpMockServer ==null) {
+			final Undertow undertow = HttpMockServerHelper.startHttpServer();
+			httpMockServer =  new HttpMockServer(undertow);
 
-		return new HttpMockServer(undertow);
+		}
+		return httpMockServer;
 	}
 }

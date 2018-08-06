@@ -12,24 +12,20 @@
 
 package com.alibaba.tsmock.main;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.alibaba.tsmock.constants.Config;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.lang3.StringUtils;
-
 import com.alibaba.tsmock.concurrent.HttpMockServerThread;
 import com.alibaba.tsmock.concurrent.MqMockServerThread;
 import com.alibaba.tsmock.config.EnumConfigType;
 import com.alibaba.tsmock.config.MockServerConfig;
+import com.alibaba.tsmock.constants.Config;
+import com.alibaba.tsmock.core.http.HttpMockServer;
+import org.apache.commons.cli.*;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /** The Class TSMockMain
  *
@@ -41,7 +37,8 @@ public class TSMockMain {
 	public static String httpOptionStr = null;
 	public static String mqOptionStr = null;
 	public static String logOptionStr = null;
-	public static boolean daemonOptionBool = false;
+	public static Thread httpThread = null;
+	public static Thread mqThread = null;
 
 	/** pass the name of the file like: java -jar tsmock.jar -h httpmock.json -m
 	 * mqmock.json
@@ -116,9 +113,45 @@ public class TSMockMain {
 	}
 
 
+
+	public static boolean reStart(String httpMockConfigFile, String mqMockConfigFile, Map<String,String> logProps,boolean daemon) throws InterruptedException {
+		Date dateStart=new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+		String formatDateSstart = sdf.format(dateStart);
+		System.out.println("["+formatDateSstart+"] [HTTP] Stop the mock server");
+
+
+		HttpMockServer.getServer().shutdown();
+		httpThread.interrupt();
+		httpThread.stop();
+
+		Date dateStop=new Date();
+		String formatDateStop = sdf.format(dateStop);
+		System.out.println("["+formatDateStop+"] [HTTP] Stop completed");
+		if (!StringUtils.isEmpty(httpMockConfigFile)) {
+			if (!MockServerConfig.init(EnumConfigType.HTTP, httpMockConfigFile,logProps)) {
+				System.err.println("Failed to init http");
+				return false;
+			}
+		}
+		if (!StringUtils.isEmpty(mqMockConfigFile)) {
+			if (!MockServerConfig.init(EnumConfigType.MQ, mqMockConfigFile,logProps)) {
+				System.err.println("Failed to init mq");
+				return false;
+			}
+		}
+
+		if (start(daemon) == false) {
+			System.err.println("Failed to start mock core");
+			return false;
+		}
+		return true;
+
+	}
+
+
 	public static boolean start(boolean daemon) throws InterruptedException {
-		Thread httpThread = null;
-		Thread mqThread = null;
+
 
 		if (MockServerConfig.getConfig(EnumConfigType.HTTP) != null) {
 			httpThread = startHttpServer(daemon);
